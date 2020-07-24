@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>ECharts</title>
+    <style type="text/css">
+        body,
+        h1 {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .left {
+            float: left;
+            width: 100%;
+            background-color: white;
+            color: black;
+            height: 300px;
+            float: left;
+            margin-bottom: 20px;
+        }
+        
+        .right {
+            float: right;
+            width: 0%;
+            background-color: white;
+            color: black;
+            height: 300px;
+            float: right;
+        }
+        
+        .main {
+            width: 90%;
+            margin: 0 auto;
+            text-align: center;
+        }
+    </style>
+    <!-- 引入 echarts.js -->
+    <script src="js/jquery-3.5.1.js"></script>
+    <script src="js/echarts.js"></script>
+</head>
+
+<body>
+    <div class="main">
+        <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+        <div id="main1" class="left"></div>
+        <div id="main2" class="left"></div>
+        <div id="main3" class="left"></div>
+        <div id="main4" class="left"></div>
+    </div>
+    <script>
+        // 基于准备好的dom，初始化echarts实例 
+
+        var myChart1 = echarts.init(document.getElementById('main1')); //定义折线图显示的位置对象
+        var myChart2 = echarts.init(document.getElementById('main2')); //定义折线图显示的位置对象
+        var myChart3 = echarts.init(document.getElementById('main3')); //定义折线图显示的位置对象
+        var myChart4 = echarts.init(document.getElementById('main4')); //定义折线图显示的位置对象
+        var //data = [],
+        //test_time = [],
+        //test_grade = [],
+            data1 = [],
+            data2 = [],
+            data3 = [];
+        var option1 = {
+            title: {
+                text: '动态数据 + 时间坐标轴'
+            },
+            tooltip: {
+                trigger: 'axis',
+                show: true,
+                /*formatter: function(params) {
+                params = params[0];
+                var date = new Date(params.name);
+                return date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + ' : ' + params.value[1];
+                },*/
+                axisPointer: {
+                    type: 'cross',
+                    animation: true,
+                    snap: true,
+                    label: {
+                        show: true
+                    }
+                }
+            },
+            legend: {
+                data: ['模拟数据1', '模拟数据2', '模拟数据3']
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    dataZoom: {
+                        yAxisIndex: 'none'
+                    },
+                    dataView: {
+                        show: true,
+                        readOnly: false
+                    },
+                    magicType: {
+                        show: true,
+                        type: ['line', 'line', 'line']
+                    },
+                    restore: {
+                        show: true
+                    },
+                    saveAsImage: {
+                        show: true
+                    }
+                }
+            },
+            dataZoom: [ //给x轴设置滚动条
+                {
+                    start: 0, //默认为0
+                    end: 100,
+                    type: 'slider',
+                    show: true,
+                    xAxisIndex: [0],
+                    handleSize: 0, //滑动条的 左右2个滑动条的大小
+                    height: 8, //组件高度
+                    //top: 26, //上边的距离
+                    left: 50, //左边的距离
+                    right: 40, //右边的距离
+                    bottom: 0, //下边的距离
+                    handleColor: '#ddd', //h滑动图标的颜色
+                    handleStyle: {
+                        borderColor: "#cacaca",
+                        borderWidth: "1",
+                        shadowBlur: 2,
+                        background: "#ddd",
+                        shadowColor: "#ddd",
+                    },
+                    fillerColor: new echarts.graphic.LinearGradient(1, 0, 0, 0, [{
+                        //给颜色设置渐变色 前面4个参数，给第一个设置1，第四个设置0 ，就是水平渐变
+                        //给第一个设置0，第四个设置1，就是垂直渐变
+                        offset: 0,
+                        color: '#1eb5e5'
+                    }, {
+                        offset: 1,
+                        color: '#5ccbb1'
+                    }]),
+                    backgroundColor: '#ddd', //两边未选中的滑动条区域的颜色
+                    showDataShadow: false, //是否显示数据阴影 默认auto
+                    showDetail: false, //即拖拽时候是否显示详细数值信息 默认true
+                    handleIcon: 'M-292,322.2c-3.2,0-6.4-0.6-9.3-1.9c-2.9-1.2-5.4-2.9-7.6-5.1s-3.9-4.8-5.1-7.6c-1.3-3-1.9-6.1-1.9-9.3c0-3.2,0.6-6.4,1.9-9.3c1.2-2.9,2.9-5.4,5.1-7.6s4.8-3.9,7.6-5.1c3-1.3,6.1-1.9,9.3-1.9c3.2,0,6.4,0.6,9.3,1.9c2.9,1.2,5.4,2.9,7.6,5.1s3.9,4.8,5.1,7.6c1.3,3,1.9,6.1,1.9,9.3c0,3.2-0.6,6.4-1.9,9.3c-1.2,2.9-2.9,5.4-5.1,7.6s-4.8,3.9-7.6,5.1C-285.6,321.5-288.8,322.2-292,322.2z',
+                    filterMode: 'filter'
+                },
+                //下面这个属性是里面拖到
+                {
+                    type: 'inside',
+                    show: true,
+                    xAxisIndex: [0],
+                    start: 0, //默认为1
+                    end: 50
+                },
+            ],
+            xAxis: {
+                type: 'category',
+                min: 'dataMin',
+                max: 'dataMax',
+                maxInterval: 3600 * 24 * 1000,
+                axisLabel: {
+                    interval: 0,
+                    rotate: 25
+                },
+                splitLine: {
+                    show: true
+                }
+            },
+            yAxis: {
+                type: 'value',
+                boundaryGap: [0, '100%'],
+                splitLine: {
+                    show: true
+                },
+                axisLabel: {
+                    formatter: '{value} °C'
+                }
+            },
+            series: [{
+                name: '模拟数据1',
+                type: 'line',
+                showSymbol: true,
+                hoverAnimation: true,
+                data: data1,
+                markPoint: {
+                    data: [{
+                        type: 'max',
+                        name: '最大值'
+                    }, {
+                        type: 'min',
+                        name: '最小值'
+                    }]
+                }
+            }, {
+                name: '模拟数据2',
+                type: 'line',
+                showSymbol: true,
+                hoverAnimation: true,
+                data: data2,
+                markPoint: {
+                    data: [{
+                        type: 'max',
+                        name: '最大值'
+                    }, {
+                        type: 'min',
+                        name: '最小值'
+                    }]
+                }
+            }, {
+                name: '模拟数据3',
+                type: 'line',
+                showSymbol: true,
+                hoverAnimation: true,
+                data: data3,
+                markPoint: {
+                    data: [{
+                        type: 'max',
+                        name: '最大值'
+                    }, {
+                        type: 'min',
+                        name: '最小值'
+                    }]
+                }
+            }]
+        };
+        var option2 = {
+            title: {
+                text: '动态数据 + 时间坐标轴'
+            },
+            tooltip: {
+                trigger: 'axis',
+                show: true,
+                /*formatter: function(params) {
+                params = params[0];
+                var date = new Date(params.name);
+                return date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + ' : ' + params.value[1];
+                },*/
+                axisPointer: {
+                    type: 'cross',
+                    animation: true,
+                    snap: true,
+                    label: {
+                        show: true
+                    }
+                }
+            },
+            legend: {
+                data: ['模拟数据1', '模拟数据2', '模拟数据3']
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    dataZoom: {
+                        yAxisIndex: 'none'
+                    },
+                    dataView: {
+                        show: true,
+                        readOnly: false
+                    },
+                    magicType: {
+                        show: true,
+                        type: ['line', 'line', 'line']
+                    },
+                    restore: {
+                        show: true
+                    },
+                    saveAsImage: {
+                        show: true
+                    }
+                }
+            },
+            dataZoom: [ //给x轴设置滚动条
+                {
+                    start: 0, //默认为0
+                    end: 100,
+                    type: 'slider',
+                    show: true,
+                    xAxisIndex: [0],
+                    handleSize: 0, //滑动条的 左右2个滑动条的大小
+                    height: 8, //组件高度
+                    //top: 26, //上边的距离
+                    left: 50, //左边的距离
+                    right: 40, //右边的距离
+                    bottom: 0, //下边的距离
+                    handleColor: '#ddd', //h滑动图标的颜色
+                    handleStyle: {
+                        borderColor: "#cacaca",
+                        borderWidth: "1",
+                        shadowBlur: 2,
+                        background: "#ddd",
+                        shadowColor: "#ddd",
+                    },
+                    fillerColor: new echarts.graphic.LinearGradient(1, 0, 0, 0, [{
+                        //给颜色设置渐变色 前面4个参数，给第一个设置1，第四个设置0 ，就是水平渐变
+                        //给第一个设置0，第四个设置1，就是垂直渐变
+                        offset: 0,
+                        color: '#1eb5e5'
+                    }, {
+                        offset: 1,
+                        color: '#5ccbb1'
+                    }]),
+                    backgroundColor: '#ddd', //两边未选中的滑动条区域的颜色
+                    showDataShadow: false, //是否显示数据阴影 默认auto
+                    showDetail: false, //即拖拽时候是否显示详细数值信息 默认true
+                    handleIcon: 'M-292,322.2c-3.2,0-6.4-0.6-9.3-1.9c-2.9-1.2-5.4-2.9-7.6-5.1s-3.9-4.8-5.1-7.6c-1.3-3-1.9-6.1-1.9-9.3c0-3.2,0.6-6.4,1.9-9.3c1.2-2.9,2.9-5.4,5.1-7.6s4.8-3.9,7.6-5.1c3-1.3,6.1-1.9,9.3-1.9c3.2,0,6.4,0.6,9.3,1.9c2.9,1.2,5.4,2.9,7.6,5.1s3.9,4.8,5.1,7.6c1.3,3,1.9,6.1,1.9,9.3c0,3.2-0.6,6.4-1.9,9.3c-1.2,2.9-2.9,5.4-5.1,7.6s-4.8,3.9-7.6,5.1C-285.6,321.5-288.8,322.2-292,322.2z',
+                    filterMode: 'filter'
+                },
+                //下面这个属性是里面拖到
+                {
+                    type: 'inside',
+                    show: true,
+                    xAxisIndex: [0],
+                    start: 0, //默认为1
+                    end: 50
+                },
+            ],
+            xAxis: {
+                type: 'category',
+                min: 'dataMin',
+                max: 'dataMax',
+                maxInterval: 3600 * 24 * 1000,
+                axisLabel: {
+                    interval: 0,
+                    rotate: 25
+                },
+                splitLine: {
+                    show: true
+                }
+            },
+            yAxis: {
+                type: 'value',
+                boundaryGap: [0, '100%'],
+                splitLine: {
+                    show: true
+                },
+                axisLabel: {
+                    formatter: '{value} °C'
+                }
+            },
+            series: [{
+                name: '模拟数据1',
+                type: 'line',
+                showSymbol: true,
+                hoverAnimation: true,
+                data: data1,
+                markPoint: {
+                    data: [{
+                        type: 'max',
+                        name: '最大值'
+                    }, {
+                        type: 'min',
+                        name: '最小值'
+                    }]
+                }
+            }, {
+                name: '模拟数据2',
+                type: 'line',
+                showSymbol: true,
+                hoverAnimation: true,
+                data: data2,
+                markPoint: {
+                    data: [{
+                        type: 'max',
+                        name: '最大值'
+                    }, {
+                        type: 'min',
+                        name: '最小值'
+                    }]
+                }
+            }, {
+                name: '模拟数据3',
+                type: 'line',
+                showSymbol: true,
+                hoverAnimation: true,
+                data: data3,
+                markPoint: {
+                    data: [{
+                        type: 'max',
+                        name: '最大值'
+                    }, {
+                        type: 'min',
+                        name: '最小值'
+                    }]
+                }
+            }]
+        };
+        var option3 = {
+            title: {
+                text: '动态数据 + 时间坐标轴'
+            },
+            tooltip: {
+                trigger: 'axis',
+                show: true,
+                /*formatter: function(params) {
+                params = params[0];
+                var date = new Date(params.name);
+                return date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + ' : ' + params.value[1];
+                },*/
+                axisPointer: {
+                    type: 'cross',
+                    animation: true,
+                    snap: true,
+                    label: {
+                        show: true
+                    }
+                }
+            },
+            legend: {
+                data: ['模拟数据1', '模拟数据2', '模拟数据3']
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    dataZoom: {
+                        yAxisIndex: 'none'
+                    },
+                    dataView: {
+                        show: true,
+                        readOnly: false
+                    },
+                    magicType: {
+                        show: true,
+                        type: ['line', 'line', 'line']
+                    },
+                    restore: {
+                        show: true
+                    },
+                    saveAsImage: {
+                        show: true
+                    }
+                }
+            },
+            dataZoom: [ //给x轴设置滚动条
+                {
+                    start: 0, //默认为0
+                    end: 100,
+                    type: 'slider',
+                    show: true,
+                    xAxisIndex: [0],
+                    handleSize: 0, //滑动条的 左右2个滑动条的大小
+                    height: 8, //组件高度
+                    //top: 26, //上边的距离
+                    left: 50, //左边的距离
+                    right: 40, //右边的距离
+                    bottom: 0, //下边的距离
+                    handleColor: '#ddd', //h滑动图标的颜色
+                    handleStyle: {
+                        borderColor: "#cacaca",
+                        borderWidth: "1",
+                        shadowBlur: 2,
+                        background: "#ddd",
+                        shadowColor: "#ddd",
+                    },
+                    fillerColor: new echarts.graphic.LinearGradient(1, 0, 0, 0, [{
+                        //给颜色设置渐变色 前面4个参数，给第一个设置1，第四个设置0 ，就是水平渐变
+                        //给第一个设置0，第四个设置1，就是垂直渐变
+                        offset: 0,
+                        color: '#1eb5e5'
+                    }, {
+                        offset: 1,
+                        color: '#5ccbb1'
+                    }]),
+                    backgroundColor: '#ddd', //两边未选中的滑动条区域的颜色
+                    showDataShadow: false, //是否显示数据阴影 默认auto
+                    showDetail: false, //即拖拽时候是否显示详细数值信息 默认true
+                    handleIcon: 'M-292,322.2c-3.2,0-6.4-0.6-9.3-1.9c-2.9-1.2-5.4-2.9-7.6-5.1s-3.9-4.8-5.1-7.6c-1.3-3-1.9-6.1-1.9-9.3c0-3.2,0.6-6.4,1.9-9.3c1.2-2.9,2.9-5.4,5.1-7.6s4.8-3.9,7.6-5.1c3-1.3,6.1-1.9,9.3-1.9c3.2,0,6.4,0.6,9.3,1.9c2.9,1.2,5.4,2.9,7.6,5.1s3.9,4.8,5.1,7.6c1.3,3,1.9,6.1,1.9,9.3c0,3.2-0.6,6.4-1.9,9.3c-1.2,2.9-2.9,5.4-5.1,7.6s-4.8,3.9-7.6,5.1C-285.6,321.5-288.8,322.2-292,322.2z',
+                    filterMode: 'filter'
+                },
+                //下面这个属性是里面拖到
+                {
+                    type: 'inside',
+                    show: true,
+                    xAxisIndex: [0],
+                    start: 0, //默认为1
+                    end: 50
+                },
+            ],
+            xAxis: {
+                type: 'category',
+                min: 'dataMin',
+                max: 'dataMax',
+                maxInterval: 3600 * 24 * 1000,
+                axisLabel: {
+                    interval: 0,
+                    rotate: 25
+                },
+                splitLine: {
+                    show: true
+                }
+            },
+            yAxis: {
+                type: 'value',
+                boundaryGap: [0, '100%'],
+                splitLine: {
+                    show: true
+                },
+                axisLabel: {
+                    formatter: '{value} °C'
+                }
+            },
+            series: [{
+                name: '模拟数据1',
+                type: 'line',
+                showSymbol: true,
+                hoverAnimation: true,
+                data: data1,
+                markPoint: {
+                    data: [{
+                        type: 'max',
+                        name: '最大值'
+                    }, {
+                        type: 'min',
+                        name: '最小值'
+                    }]
+                }
+            }, {
+                name: '模拟数据2',
+                type: 'line',
+                showSymbol: true,
+                hoverAnimation: true,
+                data: data2,
+                markPoint: {
+                    data: [{
+                        type: 'max',
+                        name: '最大值'
+                    }, {
+                        type: 'min',
+                        name: '最小值'
+                    }]
+                }
+            }, {
+                name: '模拟数据3',
+                type: 'line',
+                showSymbol: true,
+                hoverAnimation: true,
+                data: data3,
+                markPoint: {
+                    data: [{
+                        type: 'max',
+                        name: '最大值'
+                    }, {
+                        type: 'min',
+                        name: '最小值'
+                    }]
+                }
+            }]
+        };
+        var option4 = {
+            title: {
+                text: '动态数据 + 时间坐标轴'
+            },
+            tooltip: {
+                trigger: 'axis',
+                show: true,
+                /*formatter: function(params) {
+                params = params[0];
+                var date = new Date(params.name);
+                return date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + ' : ' + params.value[1];
+                },*/
+                axisPointer: {
+                    type: 'cross',
+                    animation: true,
+                    snap: true,
+                    label: {
+                        show: true
+                    }
+                }
+            },
+            legend: {
+                data: ['模拟数据1', '模拟数据2', '模拟数据3']
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    dataZoom: {
+                        yAxisIndex: 'none'
+                    },
+                    dataView: {
+                        show: true,
+                        readOnly: false
+                    },
+                    magicType: {
+                        show: true,
+                        type: ['line', 'line', 'line']
+                    },
+                    restore: {
+                        show: true
+                    },
+                    saveAsImage: {
+                        show: true
+                    }
+                }
+            },
+            dataZoom: [ //给x轴设置滚动条
+                {
+                    start: 0, //默认为0
+                    end: 100,
+                    type: 'slider',
+                    show: true,
+                    xAxisIndex: [0],
+                    handleSize: 0, //滑动条的 左右2个滑动条的大小
+                    height: 8, //组件高度
+                    //top: 26, //上边的距离
+                    left: 50, //左边的距离
+                    right: 40, //右边的距离
+                    bottom: 0, //下边的距离
+                    handleColor: '#ddd', //h滑动图标的颜色
+                    handleStyle: {
+                        borderColor: "#cacaca",
+                        borderWidth: "1",
+                        shadowBlur: 2,
+                        background: "#ddd",
+                        shadowColor: "#ddd",
+                    },
+                    fillerColor: new echarts.graphic.LinearGradient(1, 0, 0, 0, [{
+                        //给颜色设置渐变色 前面4个参数，给第一个设置1，第四个设置0 ，就是水平渐变
+                        //给第一个设置0，第四个设置1，就是垂直渐变
+                        offset: 0,
+                        color: '#1eb5e5'
+                    }, {
+                        offset: 1,
+                        color: '#5ccbb1'
+                    }]),
+                    backgroundColor: '#ddd', //两边未选中的滑动条区域的颜色
+                    showDataShadow: false, //是否显示数据阴影 默认auto
+                    showDetail: false, //即拖拽时候是否显示详细数值信息 默认true
+                    handleIcon: 'M-292,322.2c-3.2,0-6.4-0.6-9.3-1.9c-2.9-1.2-5.4-2.9-7.6-5.1s-3.9-4.8-5.1-7.6c-1.3-3-1.9-6.1-1.9-9.3c0-3.2,0.6-6.4,1.9-9.3c1.2-2.9,2.9-5.4,5.1-7.6s4.8-3.9,7.6-5.1c3-1.3,6.1-1.9,9.3-1.9c3.2,0,6.4,0.6,9.3,1.9c2.9,1.2,5.4,2.9,7.6,5.1s3.9,4.8,5.1,7.6c1.3,3,1.9,6.1,1.9,9.3c0,3.2-0.6,6.4-1.9,9.3c-1.2,2.9-2.9,5.4-5.1,7.6s-4.8,3.9-7.6,5.1C-285.6,321.5-288.8,322.2-292,322.2z',
+                    filterMode: 'filter'
+                },
+                //下面这个属性是里面拖到
+                {
+                    type: 'inside',
+                    show: true,
+                    xAxisIndex: [0],
+                    start: 0, //默认为1
+                    end: 50
+                },
+            ],
+            xAxis: {
+                type: 'category',
+                min: 'dataMin',
+                max: 'dataMax',
+                maxInterval: 3600 * 24 * 1000,
+                axisLabel: {
+                    interval: 0,
+                    rotate: 25
+                },
+                splitLine: {
+                    show: true
+                }
+            },
+            yAxis: {
+                type: 'value',
+                boundaryGap: [0, '100%'],
+                splitLine: {
+                    show: true
+                },
+                axisLabel: {
+                    formatter: '{value} °C'
+                }
+            },
+            series: [{
+                name: '模拟数据1',
+                type: 'line',
+                showSymbol: true,
+                hoverAnimation: true,
+                data: data1,
+                markPoint: {
+                    data: [{
+                        type: 'max',
+                        name: '最大值'
+                    }, {
+                        type: 'min',
+                        name: '最小值'
+                    }]
+                }
+            }, {
+                name: '模拟数据2',
+                type: 'line',
+                showSymbol: true,
+                hoverAnimation: true,
+                data: data2,
+                markPoint: {
+                    data: [{
+                        type: 'max',
+                        name: '最大值'
+                    }, {
+                        type: 'min',
+                        name: '最小值'
+                    }]
+                }
+            }, {
+                name: '模拟数据3',
+                type: 'line',
+                showSymbol: true,
+                hoverAnimation: true,
+                data: data3,
+                markPoint: {
+                    data: [{
+                        type: 'max',
+                        name: '最大值'
+                    }, {
+                        type: 'min',
+                        name: '最小值'
+                    }]
+                }
+            }]
+        };
+
+        /*
+        var result = [
+        ['2020/4/10 9:20:23', '11'],
+        ['2020/7/11 8:20:23', '22'],
+        ['2020/9/12 13:20:23', '33'],
+        ['2020/3/12 13:20:23', '33']
+        ];
+        */
+
+        function my(time, value) {
+            now = new Date(time);
+            return {
+                name: now.toString(),
+                value: [
+                    [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/') + ' ' + [now.getHours(), now.getMinutes(), now.getSeconds()].join(':'), Math.round(value)
+                ]
+            }
+        };
+        /*
+        for (var i = 0; i < result.length; i++) {
+        data.push([result[i].test_time, result[i].test_grade]);
+        }
+        */
+        $.ajax({
+            type: "post",
+            async: false,
+            url: "getuser.php",
+            //data: {},
+            dataType: "json",
+            success: function(result) {
+                if (result) {
+                    for (var i = 0; i < result.length; i++) {
+                        //alert(result[i].test_time);
+                        //data.push([result[i].test_time, result[i].test_grade]);
+                        //data.push(result[i].test_time, result[i].test_grade);
+                        //test_time.push(result[i].test_time);
+                        //test_grade.push(result[i].test_grade);
+                        data1.push(my(result[i].test_time, result[i].test_id));
+                        data2.push(my(result[i].test_time, result[i].test_grade));
+                        data3.push(my(result[i].test_time, Number(result[i].test_id) + Number(result[i].test_grade)));
+                    }
+                    myChart1.setOption(option1);
+                    myChart2.setOption(option2);
+                    myChart3.setOption(option3);
+                    myChart4.setOption(option4);
+                }
+            },
+            error: function(errmsg) {
+                alert("Ajax获取服务器数据出错了！" + errmsg);
+            }
+        });
+
+        setInterval(function() {
+            /*for (var i = 0; i < result.length; i++) {
+            data.shift();
+            data.push(my(result[i][0], result[i][1]));
+            //data.push(randomData());
+            }
+
+            myChart.setOption(option);*/
+
+            //*
+            $.ajax({
+                type: "post",
+                async: false,
+                url: "getuser.php",
+                //data: {},
+                dataType: "json",
+                success: function(result) {
+                    if (result) {
+                        for (var i = 0; i < result.length; i++) {
+                            //data.shift();
+                            //test_time.shift();
+                            //test_grade.shift();
+                            data1.shift();
+                            data2.shift();
+                            data3.shift();
+                            //data.push([result[i].test_time, result[i].test_grade]);
+                            //data.push(result[i].test_time, result[i].test_grade);
+                            //test_time.push(result[i].test_time);
+                            //test_grade.push(result[i].test_grade);
+                            data1.push(my(result[i].test_time, result[i].test_id));
+                            data2.push(my(result[i].test_time, result[i].test_grade));
+                            data3.push(my(result[i].test_time, Number(result[i].test_id) + Number(result[i].test_grade)));
+                        }
+                        myChart1.on('globalout', function(params) { // 处理点击事件
+                            myChart1.setOption(option1);
+                        });
+                        myChart2.on('globalout', function(params) { // 处理点击事件
+                            myChart2.setOption(option2);
+                        });
+                        myChart3.on('globalout', function(params) { // 处理点击事件
+                            myChart3.setOption(option3);
+                        });
+                        myChart4.on('globalout', function(params) { // 处理点击事件
+                            myChart4.setOption(option4);
+                        });
+                    }
+                },
+                error: function(errmsg) {
+                    alert("Ajax获取服务器数据出错了！" + errmsg);
+                }
+            }); //*/
+        }, 1000);
+    </script>
+</body>
+
+</html>
